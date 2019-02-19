@@ -8,7 +8,12 @@ WORKDIR /tmp
 
 RUN set -x \
   && wget -q "https://dist.ipfs.io/ipfs-cluster-ctl/$CLUSTER_VERSION/$CLUSTER_TAR" \
-  && tar -xzf "$CLUSTER_TAR" --strip 1
+  && tar -xzf "$CLUSTER_TAR" --strip-components=1 ipfs-cluster-ctl/ipfs-cluster-ctl \
+  && sudo mv ipfs-cluster-ctl /usr/local/bin
 
-ENTRYPOINT ["./ipfs-cluster-ctl"]
-CMD ["--help"]
+RUN set -x \
+  && wget --quiet https://ipfs.io/ipfs/QmNgtrMpFRFFr7Gdw9HjoK2H43aVnQ1Ygu87kLP5CZRxB5/ -O dnslink-dnsimple \
+  && chmod +x dnslink-dnsimple \
+  && sudo mv dnslink-dnsimple /usr/local/bin
+
+CMD ["ipfs-cluster-ctl"]
