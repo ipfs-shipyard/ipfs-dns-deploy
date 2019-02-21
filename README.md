@@ -4,6 +4,21 @@
 
 ## Usage
 
+Pin to cluster, update pr status on github, and update dns
+
+```bash
+  CLUSTER_USER="?" \
+  CLUSTER_PASSWORD="?" \
+  GITHUB_TOKEN="?" \
+  CIRCLE_PROJECT_USERNAME="ipfs-shipyard" \
+  CIRCLE_PROJECT_REPONAME="ipld-explorer" \
+  CIRCLE_SHA1="bf3aae3bc98666fbf459b03ab2d87a97505bfab0" \
+  DOMAIN="explore.ipld.io" \
+  root_cid=$(./pin-to-cluster.sh tmp/workspace/build $DOMAIN)
+
+# dnslink-dnsimple -d $DOMAIN -l /ipfs/$root_cid -r _dnslink
+```
+
 Pin a dir on cluster.ipfs.io
 
 ```bash
