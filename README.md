@@ -132,7 +132,7 @@ docker run \
 To rebuild the image
 
 ```bash
-docker build -t olizilla/ipfs-dns-deploy --build-arg GIT_COMMIT=${git rev-parse HEAD} .
+docker build -t olizilla/ipfs-dns-deploy --build-arg GIT_COMMIT=$(git rev-parse HEAD) .
 ```
 
 To push a new image to docker hub, login to docker, then

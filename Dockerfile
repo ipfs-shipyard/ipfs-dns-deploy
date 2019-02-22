@@ -1,6 +1,9 @@
 FROM circleci/node:10.15.1
 MAINTAINER olizilla <oli@protocol.ai>
 
+ARG GIT_COMMIT=unspecified
+LABEL git_commit=$GIT_COMMIT
+
 ENV CLUSTER_VERSION v0.9.0
 ENV CLUSTER_TAR ipfs-cluster-ctl_${CLUSTER_VERSION}_linux-amd64.tar.gz
 
