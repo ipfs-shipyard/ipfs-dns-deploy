@@ -1,49 +1,161 @@
 # ipfs-dns-deploy
 
-> A Docker image for pinning things to cluster and updating dns via circleci
+> A docker image for pinning sites to cluster, notifying github, and updating dns
+
+![screenshot](screenshot.png)
+
+Use this image to add a site to IPFS as part of a circleci build and deploy workflow.
+
+This image contains:
+
+- [`ipfs-cluster-ctl`] - Pin the site root to our IPFS Cluster
+- [`dnslink-dnsimple`] - Update DNSLink TXT records via the DNSimple api
+- [`pin-to-cluster.sh`] - The script to tie it all together
 
 ## Usage
 
-Pin to cluster, update pr status on github, and update dns
+This `circleci/config.yml` config will
 
-```bash
-  CLUSTER_USER="?" \
-  CLUSTER_PASSWORD="?" \
-  GITHUB_TOKEN="?" \
-  CIRCLE_PROJECT_USERNAME="ipfs-shipyard" \
-  CIRCLE_PROJECT_REPONAME="ipld-explorer" \
-  CIRCLE_SHA1="bf3aae3bc98666fbf459b03ab2d87a97505bfab0" \
-  DOMAIN="explore.ipld.io" \
-  root_cid=$(./pin-to-cluster.sh tmp/workspace/build $DOMAIN)
+- Adds the `BUILD_DIR` to our [IPFS Cluster](https://cluster.ipfs.io)
+- Update the PR with an IPFS status and preview url
+- Update a [DNSLink](https://docs.ipfs.io/guides/concepts/dnslink/) for the domain via dnsimple
 
-# dnslink-dnsimple -d $DOMAIN -l /ipfs/$root_cid -r _dnslink
+```yaml
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10.15.1
+    steps:
+      - checkout
+      - run:
+          command: npm ci
+      - run:
+          command: npm run build
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+
+  deploy:
+    docker:
+      - image: olizilla/ipfs-dns-deploy
+        environment:
+          DOMAIN: peerpad.net
+          DEV_DOMAIN: dev.peerpad.net
+          BUILD_DIR: build
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: Pin website, post notification for PRs or update DNS on master
+          command: |
+            # Upload build dir to cluster.ipfs.io and update PR status with preview link
+            pin_name="$DOMAIN build $CIRCLE_BUILD_NUMBER"
+            hash=$(pin-to-cluster.sh "$pin_name" /tmp/workspace/$BUILD_DIR)
+            echo "Website added to IPFS: https://ipfs.io/ipfs/$hash"
+
+            # Update dnslink for prod or dev domain
+            if [ "$CIRCLE_BRANCH" == "production" ] ; then
+              dnslink-dnsimple -d $DOMAIN -r _dnslink -l /ipfs/$hash
+
+            elif [ "$CIRCLE_BRANCH" == "master" ] ; then
+              dnslink-dnsimple -d $DEV_DOMAIN -r _dnslink -l /ipfs/$hash
+            fi
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          context: ipfs-dns-deploy
+          requires:
+            - build
+
 ```
 
-Pin a dir on cluster.ipfs.io
+You can get creative with the dns updating. In this example, changes to the `master` branch trigger a dns update to the `DEV_DOMAIN`, while changes to a branch called `production` trigger a dns update for the live domain.
 
-```bash
-docker run olizilla/ipfs-dns-deploy ipfs-cluster-ctl \
-  --host /dnsaddr/cluster.ipfs.io \
-  --basic-auth $CLUSTER_USER:$CLUSTER_PASSWORD \
-  add --rmin 3 --rmax 3 --name $DOMAIN \
-  --recursive ./build
+## Requirements
+
+The following environment variables should be set
+
+```sh
+CLUSTER_USER="<beep>"
+CLUSTER_PASSWORD="<boop>"
+GITHUB_TOKEN="<needs repo status scope>"
+DNSIMPLE_TOKEN="<from an account that controls your domain>"
 ```
 
-Update the DNSLink for a domain via dnsimple
+To simplify secret management, set them in a circleci `context` called `ipfs-dns-deploy`
+that can be shared across all repos in an github org.
 
-```bash
-docker run olizilla/ipfs-dns-deploy dnslink-dnsimple \
-  -d $DOMAIN -l /ipfs/$HASH -r _dnslink
+The script assumes it will have access to the circleci variables
+
+```sh
+CIRCLE_PROJECT_USERNAME="ipfs-shipyard"
+CIRCLE_PROJECT_REPONAME="peer-pad"
+CIRCLE_SHA1="f818cb08e0e79fcc203f4d52a1a1dd7c3c832a64"
+CIRCLE_BUILD_NUMBER="1870"
 ```
 
-## Why
 
-- We don't want to install `ipfs-cluster-ctl` and `dnslink-dnsimple` for every ci build. So it's packaged up as an image.
-- You can't use the `ipfs/ipfs-cluster` docker image as a primary image on circleci. Things like attaching the workspace fail.
+## Other examples
 
-Hence this image. It builds off `circleci/node` so it has all the tools to build websites.
+Pin to cluster and update the PR with the pin status.
 
-## TODO
+```bash
+docker run \
+  -e CLUSTER_USER="beep" \
+  -e CLUSTER_PASSWORD="boop" \
+  -e GITHUB_TOKEN="xyz" \
+  -e CIRCLE_PROJECT_USERNAME="ipfs-shipyard" \
+  -e CIRCLE_PROJECT_REPONAME="peer-pad" \
+  -e CIRCLE_SHA1="f818cb08e0e79fcc203f4d52a1a1dd7c3c832a64" \
+  -v build:/tmp/build \
+  olizilla/ipfs-dns-deploy \
+  pin-to-cluster.sh "dev.peerpad.net" ./build
+```
 
-- Update https://github.com/ipfs/dnslink-dnsimple once https://github.com/ipfs/dnslink-dnsimple/pull/8 is merged.
-- Include hugo. Or not. Each site should know how to fetch it's own build dependencies.
+Update the DNSLink for a domain via dnslink-dnsimple
+
+```bash
+docker run \
+  -e DNSIMPLE_TOKEN="beep" \
+  olizilla/ipfs-dns-deploy \
+  dnslink-dnsimple -d $DOMAIN -l /ipfs/$HASH -r _dnslink
+```
+
+## Updating the Docker image
+
+To rebuild the image
+
+```bash
+docker build -t olizilla/ipfs-dns-deploy .
+```
+
+To push a new image to docker hub, login to docker, then
+
+```bash
+docker push olizilla/ipfs-dns-deploy
+```
+
+
+## Contribute
+
+Feel free to dive in! [Open an issue](https://github.com/ipfs-shipyard/ipfs-dns-deploy/issues/new) or submit PRs.
+
+To contribute to IPFS in general, see the [contributing guide](https://github.com/ipfs/community/blob/master/contributing.md).
+
+[![](https://cdn.rawgit.com/jbenet/contribute-ipfs-gif/master/img/contribute.gif)](https://github.com/ipfs/community/blob/master/CONTRIBUTING.md)
+
+
+## License
+
+[MIT](LICENSE) © Protocol Labs
+
+
+[`ipfs-cluster-ctl`]: https://cluster.ipfs.io/documentation/ipfs-cluster-ctl/
+[`dnslink-dnsimple`]: https://github.com/ipfs/dnslink-dnsimple
+[`pin-to-cluster.sh`]: scripts/pin-to-cluster.sh
