@@ -1,13 +1,10 @@
 FROM circleci/node:10.15.1
 MAINTAINER olizilla <oli@protocol.ai>
 
-ARG GIT_COMMIT=unspecified
-LABEL git_commit=$GIT_COMMIT
+WORKDIR /tmp
 
 ENV CLUSTER_VERSION v0.9.0
 ENV CLUSTER_TAR ipfs-cluster-ctl_${CLUSTER_VERSION}_linux-amd64.tar.gz
-
-WORKDIR /tmp
 
 RUN set -x \
   && wget -q "https://dist.ipfs.io/ipfs-cluster-ctl/$CLUSTER_VERSION/$CLUSTER_TAR" \
@@ -20,3 +17,6 @@ RUN set -x \
   && sudo mv dnslink-dnsimple /usr/local/bin
 
 COPY scripts/pin-to-cluster.sh /usr/local/bin
+
+ARG GIT_COMMIT=unspecified
+LABEL git_commit=$GIT_COMMIT
