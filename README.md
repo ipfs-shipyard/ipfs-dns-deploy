@@ -16,8 +16,8 @@ This image contains:
 
 This `circleci/config.yml` config will
 
-- Adds the `BUILD_DIR` to our [IPFS Cluster](https://cluster.ipfs.io)
-- Update the PR with an IPFS status and preview url
+- Add the `BUILD_DIR` to our [IPFS Cluster](https://cluster.ipfs.io)
+- Update the PR with an IPFS deploy status and preview url
 - Update a [DNSLink](https://docs.ipfs.io/guides/concepts/dnslink/) for the domain via dnsimple
 
 ```yaml
@@ -50,12 +50,13 @@ jobs:
       - run:
           name: Pin website, post notification for PRs or update DNS on master
           command: |
-            # Upload build dir to cluster.ipfs.io and update PR status with preview link
             pin_name="$DOMAIN build $CIRCLE_BUILD_NUMBER"
+            
             hash=$(pin-to-cluster.sh "$pin_name" /tmp/workspace/$BUILD_DIR)
+            
             echo "Website added to IPFS: https://ipfs.io/ipfs/$hash"
 
-            # Update dnslink for prod or dev domain
+            # Update DNSlink for prod or dev domain
             if [ "$CIRCLE_BRANCH" == "production" ] ; then
               dnslink-dnsimple -d $DOMAIN -r _dnslink -l /ipfs/$hash
 
