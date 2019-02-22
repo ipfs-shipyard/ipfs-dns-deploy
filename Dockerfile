@@ -16,4 +16,4 @@ RUN set -x \
   && chmod +x dnslink-dnsimple \
   && sudo mv dnslink-dnsimple /usr/local/bin
 
-CMD ["ipfs-cluster-ctl"]
+COPY scripts/pin-to-cluster.sh /usr/local/bin
