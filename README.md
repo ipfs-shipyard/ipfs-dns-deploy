@@ -101,6 +101,11 @@ CIRCLE_SHA1="f818cb08e0e79fcc203f4d52a1a1dd7c3c832a64"
 CIRCLE_BUILD_NUMBER="1870"
 ```
 
+## Setting up a new org
+
+- Create a circleci context called `ipfs-dns-deploy` for your org
+- Add the secrets to that context listed above
+- invite the gihub user `@ipfsbot` to the filecoin-project org
 
 ## Other examples
 
