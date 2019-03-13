@@ -48,7 +48,7 @@ jobs:
       - attach_workspace:
           at: /tmp/workspace
       - run:
-          name: Pin website, post notification for PRs or update DNS on master
+          name: Add to IPFS
           command: |
             pin_name="$DOMAIN build $CIRCLE_BUILD_NUMBER"
             
