@@ -12,6 +12,30 @@ This image contains:
 - [`dnslink-dnsimple`] - Update DNSLink TXT records via the DNSimple api
 - [`pin-to-cluster.sh`] - The script to tie it all together
 
+### What it does
+
+- You configure circle ci to run a docker build to generate your static site.
+- You tell circle to preserve the output directory that contains your built site, with the [`persist_to_workspace` ](https://circleci.com/docs/2.0/configuration-reference/#persist_to_workspace) key.
+- You tell the `ipfs-dns-deploy` the directory with your site in by setting the `BUILD_DIR` key in the `environment`.
+- `pin-to-cluster.sh` sends the `BUILD_DIR` over http via the `ipfs-cluster-ctl` cli to `/dnsaddr/cluster.ipfs.io`. You can override which cluster to use by setting the `CLUSTER_HOST`.
+- **If it pins to cluster successfully, the command returns the root CID.**
+- If a `GITHUB_TOKEN` is set in the `environment`, the command also sets the CID as a GitHub status for that commit. This is nice, as it means you can grab a CID for any commit on your repo from GitHub, and you get a nice IPFS status bar on PRs which always shows the most recent CID for latest commit on that PR. It's a little obscure, but you can find the CID for any successfully pinned commit from the commits log by clicking on the green check next to the commit and clicking on the details link for the IPFS item.
+![screenshot of an IPFS CID status attached to a commit on github](github-commit-ipfs-cid-check.png)
+- Once you have the CID, you get creative... want to publish that CID under DNSLink? Sure! The image comes with `dnslink-dnsimple` baked in, so you can pass it the CID and have it update the TXT record for you.
+- To check that setting the DNSLink worked, you can ask IPFS what it thinks the current CID is for a given domain
+
+```console
+$ ipfs dns libp2p.io
+/ipfs/QmaYRVyPKpN8FXy9HS1t9Zhtjo4RpYXgiuNj1ins9fiLuW
+```
+
+or, if you want to be double sure, you can ask dig
+
+```console
+$ dig _dnslink.libp2p.io -t TXT +short
+"dnslink=/ipfs/QmaYRVyPKpN8FXy9HS1t9Zhtjo4RpYXgiuNj1ins9fiLuW"
+```
+
 ## Usage
 
 This `circleci/config.yml` config will
@@ -51,9 +75,9 @@ jobs:
           name: Add to IPFS
           command: |
             pin_name="$DOMAIN build $CIRCLE_BUILD_NUMBER"
-            
+
             hash=$(pin-to-cluster.sh "$pin_name" /tmp/workspace/$BUILD_DIR)
-            
+
             echo "Website added to IPFS: https://ipfs.io/ipfs/$hash"
 
             # Update DNSlink for prod or dev domain
