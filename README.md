@@ -15,7 +15,7 @@ This image contains:
 ### What it does
 
 - `pin-to-cluster.sh` sends the `BUILD_DIR` over http via the `ipfs-cluster-ctl` cli to `/dnsaddr/cluster.ipfs.io`. You can override which cluster to use by setting the `CLUSTER_HOST`.
-- If it pins to cluster successfully, the  `pin-to-cluster.sh` returns the root CID.
+- If it pins to cluster successfully, `pin-to-cluster.sh` returns the root CID.
 - If a `GITHUB_TOKEN` is set in the `environment`, the command also sets the CID as a GitHub status for that commit. This is nice, as it means you can grab a CID for any commit on your repo from GitHub, and you get a nice IPFS status bar on PRs which always shows the most recent CID for latest commit on that PR. It's a little obscure, but you can find the CID for any successfully pinned commit from the commits log by clicking on the green check next to the commit and clicking on the details link for the IPFS item.
 
 ![screenshot of an IPFS CID status attached to a commit on github](github-commit-ipfs-cid-check.png)
