@@ -82,12 +82,12 @@ jobs:
 
             # Update DNSlink prod domain when there's a new tag
             if [ ! -z "$CIRCLE_TAG" ] ; then
-             dnslink-dnsimple -d $DOMAIN -r _dnslink -l /ipfs/$hash
+              dnslink-dnsimple -d $DOMAIN -r _dnslink -l /ipfs/$hash
             fi
             
             # Always update DNSlink dev domain
             if [ "$CIRCLE_BRANCH" == "master" ] ; then
-             dnslink-dnsimple -d $DEV_DOMAIN -r _dnslink -l /ipfs/$hash
+              dnslink-dnsimple -d $DEV_DOMAIN -r _dnslink -l /ipfs/$hash
             fi
 
 workflows:
