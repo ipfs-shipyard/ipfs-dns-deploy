@@ -80,8 +80,8 @@ jobs:
 
             echo "Website added to IPFS: https://ipfs.io/ipfs/$hash"
 
-            # Update DNSlink prod domain when there's a new tag
-            if [ ! -z "$CIRCLE_TAG" ] ; then
+            # Update DNSlink prod domain when there's a new version
+            if [ npx semver "$CIRCLE_TAG" ] ; then
               dnslink-dnsimple -d $DOMAIN -r _dnslink -l /ipfs/$hash
             fi
             
