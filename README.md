@@ -80,11 +80,13 @@ jobs:
 
             echo "Website added to IPFS: https://ipfs.io/ipfs/$hash"
 
-            # Update DNSlink for prod or dev domain
-            if [ "$CIRCLE_BRANCH" == "production" ] ; then
+            # Update DNSlink prod domain when there's a new version
+            if [ npx semver "$CIRCLE_TAG" ] ; then
               dnslink-dnsimple -d $DOMAIN -r _dnslink -l /ipfs/$hash
-
-            elif [ "$CIRCLE_BRANCH" == "master" ] ; then
+            fi
+            
+            # Always update DNSlink dev domain
+            if [ "$CIRCLE_BRANCH" == "master" ] ; then
               dnslink-dnsimple -d $DEV_DOMAIN -r _dnslink -l /ipfs/$hash
             fi
 
