@@ -1,9 +1,9 @@
-FROM circleci/node:10.15.1
+FROM circleci/node:12.13
 MAINTAINER olizilla <oli@protocol.ai>
 
 WORKDIR /tmp
 
-ENV CLUSTER_VERSION v0.10.0
+ENV CLUSTER_VERSION v0.11.0
 ENV CLUSTER_TAR ipfs-cluster-ctl_${CLUSTER_VERSION}_linux-amd64.tar.gz
 
 RUN set -x \

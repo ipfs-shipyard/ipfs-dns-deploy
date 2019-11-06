@@ -2,7 +2,7 @@
 
 > A docker image for pinning sites to cluster, notifying github, and updating dns
 
-![screenshot](screenshot.png)
+![screenshot](docs/screenshot.png)
 
 Use this image to add a site to IPFS as part of a circleci build and deploy workflow.
 
@@ -18,7 +18,7 @@ This image contains:
 - If it pins to cluster successfully, `pin-to-cluster.sh` returns the root CID.
 - If a `GITHUB_TOKEN` is set in the `environment`, the command also sets the CID as a GitHub status for that commit. This is nice, as it means you can grab a CID for any commit on your repo from GitHub, and you get a nice IPFS status bar on PRs which always shows the most recent CID for latest commit on that PR. It's a little obscure, but you can find the CID for any successfully pinned commit from the commits log by clicking on the green check next to the commit and clicking on the details link for the IPFS item.
 
-![screenshot of an IPFS CID status attached to a commit on github](github-commit-ipfs-cid-check.png)
+![screenshot of an IPFS CID status attached to a commit on github](docs/github-commit-ipfs-cid-check.png)
 
 
 - Once you have the CID, you get creative... want to publish that CID under DNSLink? Sure! The image comes with `dnslink-dnsimple` baked in, so you can pass it the CID and have it update the TXT record for you.
@@ -84,7 +84,7 @@ jobs:
             if [ npx semver "$CIRCLE_TAG" ] ; then
               dnslink-dnsimple -d $DOMAIN -r _dnslink -l /ipfs/$hash
             fi
-            
+
             # Always update DNSlink dev domain
             if [ "$CIRCLE_BRANCH" == "master" ] ; then
               dnslink-dnsimple -d $DEV_DOMAIN -r _dnslink -l /ipfs/$hash
