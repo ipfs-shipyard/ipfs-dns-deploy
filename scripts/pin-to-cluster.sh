@@ -41,10 +41,11 @@ root_cid=$(ipfs-cluster-ctl \
     --host $HOST \
     --basic-auth $CLUSTER_USER:$CLUSTER_PASSWORD \
     add --quieter \
+    --cid-version 1 \
     --name "$PIN_NAME" \
     --recursive $INPUT_DIR )
 
-preview_url=https://ipfs.io/ipfs/$root_cid
+preview_url="https://$root_cid.ipfs.dweb.link"
 
 update_github_status "success" "Website added to IPFS" "$preview_url"
 
