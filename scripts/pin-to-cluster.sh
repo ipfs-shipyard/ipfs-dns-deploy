@@ -41,6 +41,7 @@ root_cid=$(ipfs-cluster-ctl \
     --host $HOST \
     --basic-auth $CLUSTER_USER:$CLUSTER_PASSWORD \
     add --quieter \
+    --local \
     --cid-version 1 \
     --name "$PIN_NAME" \
     --recursive $INPUT_DIR )
