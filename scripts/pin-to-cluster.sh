@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+set -x
 
 if [[ $# -eq 0 ]] ; then
   echo 'Usage:'
