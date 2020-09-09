@@ -39,6 +39,7 @@ update_github_status "pending" "Pinnning to IPFS cluster" "https://ipfs.io/"
 
 # pin to cluster
 root_cid=$(ipfs-cluster-ctl \
+    --debug \
     --host $HOST \
     --basic-auth $CLUSTER_USER:$CLUSTER_PASSWORD \
     add --quieter \
