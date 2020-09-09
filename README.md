@@ -165,13 +165,20 @@ To rebuild the image
 
 ```bash
 docker build -t olizilla/ipfs-dns-deploy --build-arg GIT_COMMIT=$(git rev-parse HEAD) .
+...
+Successfully tagged olizilla/ipfs-dns-deploy:latest
 ```
 
 To push a new image to docker hub, login to docker, then
 
 ```bash
-docker tag olizilla/ipfs-dns-deploy olizilla/ipfs-dns-deploy:1.0
-docker push olizilla/ipfs-dns-deploy
+docker tag olizilla/ipfs-dns-deploy:latest olizilla/ipfs-dns-deploy:1.0
+
+# push the new tag
+docker push olizilla/ipfs-dns-deploy:1.0
+
+# update latest
+docker push olizilla/ipfs-dns-deploy:latest
 ```
 
 
