@@ -24,7 +24,7 @@ PIN_NAME=$1
 INPUT_DIR=$2
 STATUS_API_URL="https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/statuses/$CIRCLE_SHA1"
 
-update_github_status () {  
+update_github_status () {
   local params
   params=$(jq --monochrome-output --null-input --compact-output \
     --arg state "$1" \
@@ -33,7 +33,7 @@ update_github_status () {
     --arg context "IPFS" \
     '{ state: $state, target_url: $target_url, description: $description, context: $context }' )
 
-  # The --fail flag means curl will set a failure exit code for us for non-success http error codes 
+  # The --fail flag means curl will set a failure exit code for us for non-success http error codes
   # and it will print a useful error message with the status code. Combined with set -x this means
   # we stop the script and log an error.
   # We capture the output in $result here so that in the happy path it will not print anything; thhe only
@@ -53,7 +53,6 @@ root_cid=$(ipfs-cluster-ctl \
     --host "$HOST" \
     --basic-auth "$CLUSTER_USER:$CLUSTER_PASSWORD" \
     add --quieter \
-    --local \
     --cid-version 1 \
     --name "$PIN_NAME" \
     --recursive "$INPUT_DIR" ) || {
