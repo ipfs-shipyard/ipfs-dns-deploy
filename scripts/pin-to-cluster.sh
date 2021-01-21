@@ -37,7 +37,7 @@ update_github_status () {
   # and it will print a useful error message with the status code. Combined with set -x this means
   # we stop the script and log an error.
   # We capture the output in $result here so that in the happy path it will not print anything; thhe only
-  # output we want on success is the CID from ipfs-cluster-ctl
+  # output we want on success is the CID from ipfs-cluster-ctl
   result=$(curl --fail --silent --show-error -X POST -H "Authorization: token $GITHUB_TOKEN" -H 'Content-Type: application/json' --data "$params" "$STATUS_API_URL") || {
     # If it fails show the url and params
     echo "$STATUS_API_URL $params" 1>&2
@@ -65,6 +65,14 @@ root_cid=$(ipfs-cluster-ctl \
 }
 
 preview_url="https://$root_cid.ipfs.dweb.link"
+
+# Attempt to fetch the CID.
+# Ignore the response, but fail on error.
+can_get_from_gateway=$(curl --fail --silent --show-error "$preview_url") || {
+  echo "Could not fetch new CID from gateway: $preview_url" 1>&2
+  update_github_status "error" "Could not fetch new CID from gateway" "$preview_url"
+  false
+}
 
 update_github_status "success" "Website added to IPFS" "$preview_url"
 
