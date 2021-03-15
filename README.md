@@ -106,7 +106,7 @@ You can get creative with the dns updating. In this example, changes to the `mas
 
 ## Requirements
 
-The following environment variables should be set
+The following environment variables must be set
 
 ```sh
 CLUSTER_USER="<beep>"
@@ -121,10 +121,21 @@ that can be shared across all repos in an github org.
 The script assumes it will have access to the circleci variables
 
 ```sh
+# Provided by circleci. Example values shown, yours will be different.
 CIRCLE_PROJECT_USERNAME="ipfs-shipyard"
 CIRCLE_PROJECT_REPONAME="peer-pad"
 CIRCLE_SHA1="f818cb08e0e79fcc203f4d52a1a1dd7c3c832a64"
 CIRCLE_BUILD_NUMBER="1870"
+```
+
+Optionally you can provide any of the following env vars:
+
+```sh
+# set the cluster host to pin to.
+CLUSTER_HOST="/dns/a-cluster-of-ones-own"
+
+# pass extra flags to ipfs-cluster-ctl
+EXTRA_IPFS_CLUSTER_ARGS="--hidden"
 ```
 
 ## Setting up a new org
@@ -145,6 +156,7 @@ docker run \
   -e CIRCLE_PROJECT_USERNAME="ipfs-shipyard" \
   -e CIRCLE_PROJECT_REPONAME="peer-pad" \
   -e CIRCLE_SHA1="f818cb08e0e79fcc203f4d52a1a1dd7c3c832a64" \
+  -e EXTRA_IPFS_CLUSTER_ARGS="--hidden" \
   -v build:/tmp/build \
   olizilla/ipfs-dns-deploy \
   pin-to-cluster.sh "dev.peerpad.net" ./build
