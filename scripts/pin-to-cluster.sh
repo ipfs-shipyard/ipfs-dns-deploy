@@ -37,7 +37,7 @@ update_github_status () {
   # and it will print a useful error message with the status code. Combined with set -x this means
   # we stop the script and log an error.
   # We capture the output in $result here so that in the happy path it will not print anything; thhe only
-  # output we want on success is the CID from ipfs-cluster-ctl
+  # output we want on success is the CID from ipfs-cluster-ctl
   result=$(curl --fail --silent --show-error -X POST -H "Authorization: token $GITHUB_TOKEN" -H 'Content-Type: application/json' --data "$params" "$STATUS_API_URL") || {
     # If it fails show the url and params
     echo "$STATUS_API_URL $params" 1>&2
@@ -56,9 +56,11 @@ root_cid=$(ipfs-cluster-ctl \
     --local \
     --cid-version 1 \
     --name "$PIN_NAME" \
-    --recursive "$INPUT_DIR" ) || {
+    --recursive \
+    $EXTRA_IPFS_CLUSTER_ARGS \
+    "$INPUT_DIR" ) || {
   # If it fails, show the ipfs-cluster-ctl command and the error message
-  echo "ipfs-cluster-ctl --host $HOST --basic-auth *** add --quieter --local --cid-version 1 --name '$PIN_NAME' --recursive $INPUT_DIR" 1>&2
+  echo "ipfs-cluster-ctl --host $HOST --basic-auth *** add --quieter --local --cid-version 1 --name '$PIN_NAME' --recursive $EXTRA_IPFS_CLUSTER_ARGS $INPUT_DIR" 1>&2
   echo "$root_cid" 1>&2
   echo "Failed to pin to cluster" 1>&2
   false
