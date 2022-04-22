@@ -20,7 +20,8 @@ RUN set -x \
   && sudo mv dnslink-dnsimple /usr/local/bin
 
 COPY scripts/pin-to-cluster.sh /usr/local/bin
-RUN chown circleci:circleci /usr/local/bin/ipfs-cluster-ctl
+RUN sudo chown circleci:circleci /usr/local/bin/pin-to-cluster.sh
+RUN sudo chmod go+rx /usr/local/bin/pin-to-cluster.sh
 
 ARG GIT_COMMIT=unspecified
 LABEL git_commit=$GIT_COMMIT
