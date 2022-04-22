@@ -6,8 +6,11 @@ WORKDIR /tmp
 ENV CLUSTER_VERSION v1.0.0
 ENV CLUSTER_TAR ipfs-cluster-ctl_${CLUSTER_VERSION}_linux-amd64.tar.gz
 
+# Fix certificates
+RUN sudo apt-get update && sudo apt-get install -y ca-certificates libgnutls30 wget && sudo update-ca-certificates
+
 RUN set -x \
-  && wget -q "https://dist.ipfs.io/ipfs-cluster-ctl/$CLUSTER_VERSION/$CLUSTER_TAR" \
+  && wget "https://dist.ipfs.io/ipfs-cluster-ctl/$CLUSTER_VERSION/$CLUSTER_TAR" \
   && tar -xzf "$CLUSTER_TAR" --strip-components=1 ipfs-cluster-ctl/ipfs-cluster-ctl \
   && sudo mv ipfs-cluster-ctl /usr/local/bin
 
