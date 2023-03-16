@@ -3,7 +3,7 @@ MAINTAINER olizilla <oli@protocol.ai>
 
 WORKDIR /tmp
 
-ENV CLUSTER_VERSION v1.0.0
+ENV CLUSTER_VERSION v1.0.6
 ENV CLUSTER_TAR ipfs-cluster-ctl_${CLUSTER_VERSION}_linux-amd64.tar.gz
 
 # Fix certificates
