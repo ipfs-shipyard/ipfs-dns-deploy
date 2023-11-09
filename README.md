@@ -25,7 +25,7 @@ This image contains:
 - To check that setting the DNSLink worked, you can ask IPFS what it thinks the current CID is for a given domain
 
 ```console
-$ ipfs dns libp2p.io
+$ ipfs resolve /ipns/libp2p.io
 /ipfs/QmaYRVyPKpN8FXy9HS1t9Zhtjo4RpYXgiuNj1ins9fiLuW
 ```
 
