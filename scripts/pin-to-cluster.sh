@@ -68,6 +68,15 @@ root_cid=$(ipfs-cluster-ctl \
 
 preview_url="https://$root_cid.ipfs.dweb.link"
 
+# Attempt to fetch the CID.
+# Ignore the response, but fail on error.
+# Wait 60s for a response. Wait 10s after a failure. Try the same again, twice.
+can_get_from_gateway=$(curl ---max-time 60 --retry 2 --retry-delay 10 --retry-connrefused --fail --silent --show-error "$preview_url") || {
+  echo "Could not fetch new CID from gateway: $preview_url" 1>&2
+  update_github_status "error" "Could not fetch new CID from gateway" "$preview_url"
+  false
+}
+
 update_github_status "success" "Website added to IPFS" "$preview_url"
 
 echo "$root_cid"
