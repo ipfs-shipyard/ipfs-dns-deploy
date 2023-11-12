@@ -12,17 +12,23 @@ if [[ $# -eq 0 ]] ; then
   echo 'CLUSTER_USER="who" \'
   echo 'CLUSTER_PASSWORD="_secret_" \'
   echo 'GITHUB_TOKEN="_secret" \'
-  echo 'CIRCLE_SHA1="bf3aae3bc98666fbf459b03ab2d87a97505bfab0" \'
-  echo 'CIRCLE_PROJECT_USERNAME="ipfs-shipyard" \'
-  echo 'CIRCLE_PROJECT_REPONAME="ipld-explorer" \'
+  echo 'SHA1="bf3aae3bc98666fbf459b03ab2d87a97505bfab0" \'
+  echo 'PROJECT_USERNAME="ipfs-shipyard" \'
+  echo 'PROJECT_REPONAME="ipld-explorer" \'
   echo './pin-to-cluster.sh <pin name> <input root dir to pin recursivly>'
   exit 1
 fi
 
 HOST=${CLUSTER_HOST:-"/dnsaddr/cluster.ipfs.io"}
+# Default to CIRCLE_CI variables when not set
+: "${SHA1:=$CIRCLE_SHA1}"
+: "${PROJECT_USERNAME:=$CIRCLE_PROJECT_USERNAME}"
+: "${PROJECT_REPONAME:=$CIRCLE_PROJECT_REPONAME}"
 PIN_NAME=$1
-INPUT_DIR=$2
-STATUS_API_URL="https://api.github.com/repos/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/statuses/$CIRCLE_SHA1"
+INPUT_DIR=$2    
+STATUS_API_URL="https://api.github.com/repos/$PROJECT_USERNAME/$PROJECT_REPONAME/statuses/$SHA1"
+
+
 
 update_github_status () {  
   local params
