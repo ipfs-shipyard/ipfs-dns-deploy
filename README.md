@@ -1,3 +1,7 @@
+> [!CAUTION]
+> # ⛔️ Deprecation Warning
+> This GitHub Action is deprecated and no longer maintained. Use [**`ipfs-deploy-acton`**](https://github.com/ipfs/ipfs-deploy-action) and [**dnslink-action**](https://github.com/ipfs/dnslink-action) instead, which offer similar functionality and support [IPFS Cluster](https://github.com/ipfs-cluster/ipfs-cluster/#readme), [Kubo](https://github.com/ipfs/kubo#readme), and other pinning services, and Cloudflare and DNSimple for DNSLink record updates.
+
 # ipfs-dns-deploy
 
 > A docker image for pinning sites to cluster, notifying github, and updating dns
