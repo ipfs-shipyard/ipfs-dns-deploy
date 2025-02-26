@@ -1,6 +1,6 @@
 > [!CAUTION]
 > # ⛔️ Deprecation Warning
-> This GitHub Action is deprecated and no longer maintained. Use [**`ipfs-deploy-acton`**](https://github.com/ipfs/ipfs-deploy-action) and [**dnslink-action**](https://github.com/ipfs/dnslink-action) instead, which offer similar functionality and support [IPFS Cluster](https://github.com/ipfs-cluster/ipfs-cluster/#readme), [Kubo](https://github.com/ipfs/kubo#readme), and other pinning services, and Cloudflare and DNSimple for DNSLink record updates.
+> This GitHub Action is deprecated and no longer maintained. Use [**`ipfs/ipfs-deploy-action`**](https://github.com/ipfs/ipfs-deploy-action) and [**`ipfs/dnslink-action`**](https://github.com/ipfs/dnslink-action) instead, which offer similar functionality and support [IPFS Cluster](https://github.com/ipfs-cluster/ipfs-cluster/#readme), [Kubo](https://github.com/ipfs/kubo#readme), and other pinning services, and Cloudflare and DNSimple for DNSLink record updates.
 
 # ipfs-dns-deploy
 
